@@ -1,6 +1,8 @@
 bin_PROGRAMS = ugl
 AM_CFLAGS = $(DEPS_FLAGS)
-ugl_SOURCES = main.c 
+ugl_SOURCES = main.c \
+	console.c console.h \
+	common.c common.h
 
-ugl_CFLAGS = -DPANEL_IS_5909_01 $(DEPS_CFLAGS)
-ugl_LDADD = $(DEPS_LIBS)
+ugl_CFLAGS = $(DEPS_CFLAGS)
+ugl_LDADD = $(DEPS_LIBS) $(GLUT_LFLAGS)

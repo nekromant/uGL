@@ -11,8 +11,10 @@ AM_PROG_CC_C_O
 AC_MSG_NOTICE([Made in USSR in the year 2061])
 sleep 2
 
-PKG_CHECK_MODULES([DEPS], [libconfig >= 1.4.6 Xmu >=1.1.0])
+PKG_CHECK_MODULES([DEPS], [libconfig >= 1.4.6 xmu >= 1.1.0 gl >= 7.10.0 glu >= 7.10.0])
 
+
+AC_SUBST([GLUT_LFLAGS], [-lglut])
 
 # Checks for libraries.
 
@@ -25,7 +27,7 @@ AC_TYPE_UINT16_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([bzero memset strdup strerror])
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile src/core/Makefile])
 
 AC_OUTPUT
 
