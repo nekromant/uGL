@@ -6,6 +6,7 @@
 #include <math.h>       // Header file for sin/cos functions.
 #include <stdio.h>      // Header file for printf debugging.
 #include <stdarg.h>
+#include <time.h>
 
 #define CONSOLE_LINES	8
 #define CONSOLE_LMASK	0x7
@@ -91,9 +92,11 @@ void gl_printk(GLbyte r, GLbyte g, GLbyte b, char* fmt, ...)
   va_end(ap);
 }
 
-void console_init(char* font)
+static int spacing=1;
+void console_init(int _spacing, char* font)
 {
   console_build_font(font);
+  spacing=_spacing;
 }
 
 //     if (text == NULL) {                         // if there's no text, do nothing.
@@ -126,11 +129,14 @@ void console_redraw()
 {
   int pos = glutGet(GLUT_WINDOW_HEIGHT);
   glEnable2D();
+
+ 
+  
   int i=line;
   do{ 
   next_line(i);
   glColor3ub(colors[i].r,colors[i].g,colors[i].b);
-  pos-=13;
+  pos-=spacing;
   if (lines[i][0])
   {   
       glRasterPos2d(0,pos);
@@ -142,24 +148,33 @@ void console_redraw()
   
   } while (i!=line);
   pos-=5;
+  
+  glColor3ub(COLOR_LN);
+  
+  //Now draw a pretty animation
+glBegin(GL_LINES); 
+	      glColor3ub(COLOR_LN);
+	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2-ppos, pos);                          
+	      glColor3ub(255,255,255);
+	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2-ppos-15, pos);
+	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2-ppos-15, pos);                          
+	      glColor3ub(COLOR_LN);
+	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2-ppos-30, pos);                       
+	      //
+	      glColor3ub(COLOR_LN);
+	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2+ppos, pos);                          
+	      glColor3ub(255,255,255);
+	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2+ppos+15, pos);
+	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2+ppos+15, pos);                          
+	      glColor3ub(COLOR_LN);
+	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2+ppos+30, pos);                       
+  glEnd();  
   glBegin(GL_LINES);      
                 glVertex2d( 0, pos);                          
 		glVertex2d( 1024, pos);                       
   glEnd();
-  //Now draw a pretty animation
-  
-  glBegin(GL_LINES); 
-	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2-ppos, pos+3);                          
-	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2-ppos-15, pos+3);
-	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2-ppos, pos-3);                          
-	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2-ppos-15, pos-3);                       
-	      //
-	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2+ppos, pos+3);                          
-	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2+ppos-15, pos+3);
-	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2+ppos, pos-3);                          
-	      glVertex2d( glutGet(GLUT_WINDOW_WIDTH)/2+ppos-15, pos-3);                       
-  glEnd();
   ppos++;
-  if (ppos==glutGet(GLUT_WINDOW_WIDTH)/2) ppos=0;
+  if (ppos==glutGet(GLUT_WINDOW_WIDTH)/2)
+    ppos=0;
   glDisable2D();
 }

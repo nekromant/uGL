@@ -6,8 +6,10 @@
 #include <math.h>       // Header file for sin/cos functions.
 #include <stdio.h>      // Header file for printf debugging.
 #include <stdarg.h>
+#include <time.h>
 #include "console.h"
 #include "common.h"
+
 
 
 void glEnable2D()

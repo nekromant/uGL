@@ -111,6 +111,16 @@ void keyPressed(unsigned char key, int x, int y)
 
 int main(int argc, char **argv) 
 { 
+  while(1)
+  {
+  frame_start();
+  usleep(10000);
+  frame_end();
+  struct timespec* delta = frame_delta();
+  printf("%lu \n", frame_delta_ticks());
+  printf("%ld %ld \n", delta->tv_sec, delta->tv_nsec);
+  }
+  
   gl_printk(COLOR_INF,"Necromant's uGL engine.");
   /* Initialize GLUT state - glut will take any command line arguments that pertain to it or 
      X Windows - look at its documentation at http://reality.sgi.com/mjk/spec3/spec3.html */  
@@ -152,9 +162,11 @@ int main(int argc, char **argv)
   /* Initialize our window. */
   InitGL(w, h);
   
-  console_init("-adobe-helvetica-medium-r-normal--12-*-*-*-p-*-iso8859-1");
+  console_init(13,"-adobe-helvetica-medium-r-normal--12-*-*-*-p-*-iso8859-1");
   //console_redraw();
   /* Start Event Processing Engine */  
+  gl_printk(COLOR_OK,"core: Starting control thread");
+  
   glutMainLoop();  
 
   return 1;
