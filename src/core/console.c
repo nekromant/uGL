@@ -83,7 +83,12 @@ void gl_printk(GLbyte r, GLbyte g, GLbyte b, char* fmt, ...)
   va_list ap;
   va_start(ap,fmt);
   next_line(line);
-  vsnprintf(&lines[line][0],LINE_LENGTH,fmt,ap);
+  float since = frametimer_since(0.0);
+  //FixMe: ugly
+  char buffer[LINE_LENGTH];
+  vsnprintf(buffer,LINE_LENGTH,fmt,ap);
+  snprintf(&lines[line][0], LINE_LENGTH,"[ %.02f ] %s",since,buffer);
+  
   colors[line].r=r;
   colors[line].g=g;
   colors[line].b=b;
@@ -147,15 +152,25 @@ void console_redraw(float del)
   } while (i!=line);
   pos-=5;
   //FPS
-  char fps[20];
-  sprintf(fps,"FPS: %.2f",frametimer_getfps());
+  char fps[128];
   glColor3ub(COLOR_INF);
   //FPS Counter
-  glRasterPos2d(glutGet(GLUT_WINDOW_WIDTH)-100,glutGet(GLUT_WINDOW_HEIGHT)-32);
   glPushAttrib(GL_LIST_BIT);
-  glListBase(base - 32); 
-  //
+  glListBase(base - 32);
+  
+  sprintf(fps,"FPS: %.2f",frametimer_getfps());
+  glRasterPos2d(glutGet(GLUT_WINDOW_WIDTH)-100,glutGet(GLUT_WINDOW_HEIGHT)-32);
   glCallLists(strlen(fps), GL_UNSIGNED_BYTE, fps);
+  sprintf(fps,"Delta: %.2f",frametimer_getdelta());
+  glRasterPos2d(glutGet(GLUT_WINDOW_WIDTH)-100,glutGet(GLUT_WINDOW_HEIGHT)-32*2);
+  glCallLists(strlen(fps), GL_UNSIGNED_BYTE, fps);
+  sprintf(fps,"Elapsed: %.2f",frametimer_since(0.0));
+  glRasterPos2d(glutGet(GLUT_WINDOW_WIDTH)-100,glutGet(GLUT_WINDOW_HEIGHT)-32*3);
+  glCallLists(strlen(fps), GL_UNSIGNED_BYTE, fps);
+  
+   
+  //
+  
   glPopAttrib(); 
       
   //Now draw a pretty animation

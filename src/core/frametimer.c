@@ -18,7 +18,7 @@
 // static struct timespec delta;
 // static unsigned long delta_nsec;
 
-static float			time_counter, last_frame_time_counter, dt, prev_time, fps;
+static float			time_counter, last_frame_time_counter, dt, prev_time, fps, elapsed;
 static struct timeval		tv, tv0;
 static int			frame, frames_per_fps;
 
@@ -30,10 +30,16 @@ void frametimer_init() {
  frames_per_fps = 30; 
 }
 
+float frametimer_since(float offset)
+{
+  return elapsed-offset;
+}
+
 void frametimer_update() {
  last_frame_time_counter =time_counter;
  gettimeofday(&tv, NULL);
  time_counter = (float)(tv.tv_sec-tv0.tv_sec) + 0.000001*((float)(tv.tv_usec-tv0.tv_usec));
+ elapsed+=dt;
  dt = time_counter - last_frame_time_counter; 
  //gl_printk(COLOR_INF,"delta: %.4f", dt);
 }

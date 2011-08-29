@@ -7,6 +7,8 @@ void frametimer_init();
 void frametimer_update();
 __inline void frametimer_process_fps();
 
+float frametimer_since(float offset);
+
 
 
 #endif
