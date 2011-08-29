@@ -12,7 +12,8 @@
 #define CONSOLE_LMASK	0x7
 #define LINE_LENGTH	1024
 #include "console.h"
-
+#include "frametimer.h"
+#include <string.h>
 
 static GLuint base;            	// base display list for the font set.
 static char lines[CONSOLE_LINES][LINE_LENGTH]; 	//buffer Lines
@@ -124,14 +125,11 @@ GLvoid glPrint(char *text)                      // custom gl print routine.
 }
 
 
-static int ppos=0;
-void console_redraw()
+static float ppos=0;
+void console_redraw(float del)
 {
   int pos = glutGet(GLUT_WINDOW_HEIGHT);
   glEnable2D();
-
- 
-  
   int i=line;
   do{ 
   next_line(i);
@@ -148,9 +146,18 @@ void console_redraw()
   
   } while (i!=line);
   pos-=5;
-  
-  glColor3ub(COLOR_LN);
-  
+  //FPS
+  char fps[20];
+  sprintf(fps,"FPS: %.2f",frametimer_getfps());
+  glColor3ub(COLOR_INF);
+  //FPS Counter
+  glRasterPos2d(glutGet(GLUT_WINDOW_WIDTH)-100,glutGet(GLUT_WINDOW_HEIGHT)-32);
+  glPushAttrib(GL_LIST_BIT);
+  glListBase(base - 32); 
+  //
+  glCallLists(strlen(fps), GL_UNSIGNED_BYTE, fps);
+  glPopAttrib(); 
+      
   //Now draw a pretty animation
 glBegin(GL_LINES); 
 	      glColor3ub(COLOR_LN);
@@ -173,8 +180,8 @@ glBegin(GL_LINES);
                 glVertex2d( 0, pos);                          
 		glVertex2d( 1024, pos);                       
   glEnd();
-  ppos++;
-  if (ppos==glutGet(GLUT_WINDOW_WIDTH)/2)
-    ppos=0;
+  ppos+=del*250.0;
+  if (ppos>=glutGet(GLUT_WINDOW_WIDTH)/2)
+    ppos=-5.0;
   glDisable2D();
 }

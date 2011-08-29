@@ -14,7 +14,9 @@
 #include <math.h>       // Header file for sin/cos functions.
 #include <stdio.h>      // Header file for printf debugging.
 #include <stdarg.h>
+#include <string.h>
 #include "console.h"
+#include "frametimer.h"
 /* ascii code for the escape key */
 #define ESCAPE 27
 
@@ -59,14 +61,20 @@ void ReSizeGLScene(int Width, int Height)
 
 static int console_enabled=1;
 /* The main drawing function. */
+
 void DrawGLScene()
 {
+  
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);           // Clear The Screen And The Depth Buffer
   glLoadIdentity();                             // Reset The View
   glColor4f(1,1,1,1);
+  float delta = frametimer_getdelta();
   
-  if (console_enabled) console_redraw();
-  //glVer
+  if (console_enabled) {
+    frametimer_process_fps(); 
+    console_redraw(delta);
+  }
+  
   glTranslatef(0.0f,0.0f,-6.0f);
   glEnable2D();
   
@@ -80,6 +88,8 @@ void DrawGLScene()
   
   // since this is double buffered, swap the buffers to display what just got drawn.
   glutSwapBuffers();
+  frametimer_update();
+  
 }
 
 
@@ -111,15 +121,6 @@ void keyPressed(unsigned char key, int x, int y)
 
 int main(int argc, char **argv) 
 { 
-  while(1)
-  {
-  frame_start();
-  usleep(10000);
-  frame_end();
-  struct timespec* delta = frame_delta();
-  printf("%lu \n", frame_delta_ticks());
-  printf("%ld %ld \n", delta->tv_sec, delta->tv_nsec);
-  }
   
   gl_printk(COLOR_INF,"Necromant's uGL engine.");
   /* Initialize GLUT state - glut will take any command line arguments that pertain to it or 
@@ -166,7 +167,7 @@ int main(int argc, char **argv)
   //console_redraw();
   /* Start Event Processing Engine */  
   gl_printk(COLOR_OK,"core: Starting control thread");
-  
+  frametimer_init();
   glutMainLoop();  
 
   return 1;

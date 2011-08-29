@@ -14,30 +14,71 @@
 
 //Dumb time for frames. Single instance for the whole app
 
-static struct timespec start_time;
-static struct timespec delta;
-static unsigned long delta_nsec;
+// static struct timespec start_time;
+// static struct timespec delta;
+// static unsigned long delta_nsec;
 
-__inline void frame_start()
-{
-  clock_gettime(CLOCK_MONOTONIC, &start_time);  
+static float			time_counter, last_frame_time_counter, dt, prev_time, fps;
+static struct timeval		tv, tv0;
+static int			frame, frames_per_fps;
+
+
+
+void frametimer_init() {
+ gettimeofday(&tv0, NULL);
+ frame=1;
+ frames_per_fps = 30; 
 }
 
-__inline void frame_end()
-{
-  struct timespec end;
-  clock_gettime(CLOCK_MONOTONIC, &end);  
-  delta.tv_sec = start_time.tv_sec-end.tv_sec;
-  delta.tv_nsec = delta.tv_sec*1000000000L + start_time.tv_nsec-end.tv_nsec;
-  delta_nsec = delta.tv_sec*1000000000L;
+void frametimer_update() {
+ last_frame_time_counter =time_counter;
+ gettimeofday(&tv, NULL);
+ time_counter = (float)(tv.tv_sec-tv0.tv_sec) + 0.000001*((float)(tv.tv_usec-tv0.tv_usec));
+ dt = time_counter - last_frame_time_counter; 
+ //gl_printk(COLOR_INF,"delta: %.4f", dt);
 }
 
-__inline struct timespec* frame_delta()
-{
-  return &delta;
+__inline void frametimer_process_fps() {
+ frame ++;
+ if((frame % frames_per_fps) == 0) {
+	//gl_printk(COLOR_INF, "upd: %.2f-%.2f, %.2f",time_counter,prev_time,fps);
+	fps = ((float)(frames_per_fps)) / (time_counter-prev_time);
+	prev_time = time_counter; 
+    } 
 }
 
-__inline unsigned long frame_delta_ticks()
+	
+__inline float frametimer_getfps()
 {
-  return delta_nsec;
+  return fps;
 }
+
+__inline float frametimer_getdelta()
+{
+  //printf("%.2f\n",dt);
+  return dt;
+}
+
+// __inline void frame_start()
+// {
+//   clock_gettime(CLOCK_MONOTONIC, &start_time);  
+// }
+// 
+// __inline void frame_end()
+// {
+//   struct timespec end;
+//   clock_gettime(CLOCK_MONOTONIC, &end);  
+//   //delta.tv_sec = start_time.tv_sec-end.tv_sec;
+//   //delta.tv_nsec = start_time.tv_nsec-end.tv_nsec;
+//   delta_nsec = (start_time.tv_sec-end.tv_sec)*1000000000L + (start_time.tv_nsec-end.tv_nsec);
+// }
+// 
+// __inline struct timespec* frame_delta()
+// {
+//   return &delta;
+// }
+// 
+// __inline unsigned long frame_delta_ticks()
+// {
+//   return delta_nsec;
+//}

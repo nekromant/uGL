@@ -5,5 +5,5 @@ ugl_SOURCES = main.c \
 	common.c common.h \
 	frametimer.c frametimer.h
 
-ugl_CFLAGS = $(DEPS_CFLAGS)
+ugl_CFLAGS = $(DEPS_CFLAGS) -g -Wall
 ugl_LDADD = $(DEPS_LIBS) $(GLUT_LFLAGS)
