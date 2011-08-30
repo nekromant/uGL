@@ -61,15 +61,27 @@ void ReSizeGLScene(int Width, int Height)
 
 static int console_enabled=1;
 /* The main drawing function. */
+//#ifdef UGL_DRAW_PROFILING 
+//static float a,b,c,d,e;
+//static char pstr[128];
+//#define 
+
+
+
+void ugl_update_scene()
+{
+  frametimer_update();
+}
 
 void DrawGLScene()
 {
+  
+  ugl_update_scene();
   
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);           // Clear The Screen And The Depth Buffer
   glLoadIdentity();                             // Reset The View
   glColor4f(1,1,1,1);
   float delta = frametimer_getdelta();
-  
   if (console_enabled) {
     frametimer_process_fps(); 
     console_redraw(delta);
@@ -88,7 +100,7 @@ void DrawGLScene()
   
   // since this is double buffered, swap the buffers to display what just got drawn.
   glutSwapBuffers();
-  frametimer_update();
+  
   
 }
 
@@ -119,9 +131,11 @@ void keyPressed(unsigned char key, int x, int y)
     
 }
 
+
+
 int main(int argc, char **argv) 
 { 
-  
+  ugl_profiler_test();
   gl_printk(COLOR_INF,"Necromant's uGL engine.");
   /* Initialize GLUT state - glut will take any command line arguments that pertain to it or 
      X Windows - look at its documentation at http://reality.sgi.com/mjk/spec3/spec3.html */  

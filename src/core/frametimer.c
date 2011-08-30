@@ -39,8 +39,8 @@ void frametimer_update() {
  last_frame_time_counter =time_counter;
  gettimeofday(&tv, NULL);
  time_counter = (float)(tv.tv_sec-tv0.tv_sec) + 0.000001*((float)(tv.tv_usec-tv0.tv_usec));
- elapsed+=dt;
  dt = time_counter - last_frame_time_counter; 
+ elapsed+=dt;
  //gl_printk(COLOR_INF,"delta: %.4f", dt);
 }
 
@@ -64,27 +64,3 @@ __inline float frametimer_getdelta()
   //printf("%.2f\n",dt);
   return dt;
 }
-
-// __inline void frame_start()
-// {
-//   clock_gettime(CLOCK_MONOTONIC, &start_time);  
-// }
-// 
-// __inline void frame_end()
-// {
-//   struct timespec end;
-//   clock_gettime(CLOCK_MONOTONIC, &end);  
-//   //delta.tv_sec = start_time.tv_sec-end.tv_sec;
-//   //delta.tv_nsec = start_time.tv_nsec-end.tv_nsec;
-//   delta_nsec = (start_time.tv_sec-end.tv_sec)*1000000000L + (start_time.tv_nsec-end.tv_nsec);
-// }
-// 
-// __inline struct timespec* frame_delta()
-// {
-//   return &delta;
-// }
-// 
-// __inline unsigned long frame_delta_ticks()
-// {
-//   return delta_nsec;
-//}
