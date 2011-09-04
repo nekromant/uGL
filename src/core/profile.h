@@ -1,10 +1,10 @@
-struct ugl_profile_stamp_t 
+struct ugl_profiler_stamp_t 
 {
   struct timeval stamp;
   char* tag;
 };
 
-struct ugl_profile_header_t
+struct ugl_profiler_header_t
 {
   struct timeval start;
   int pos;
@@ -12,14 +12,14 @@ struct ugl_profile_header_t
   char* tag;
 };
 
-struct ugl_profile_t
+struct ugl_profiler_t
 {
-  struct ugl_profile_header_t h;
+  struct ugl_profiler_header_t h;
   //struct timeval data[];
-  struct ugl_profile_stamp_t data[];
+  struct ugl_profiler_stamp_t data[];
 };
 
-#ifdef UGL_PROFILE_ENABLED
-#define 
-#else
-#endif
+struct ugl_profiler_t* ugl_profiler_create(int count, char* tag);
+__inline ugl_profiler_mark(struct ugl_profiler_t* prof, char* label);
+void ugl_profiler_reset(struct ugl_profiler_t* prof);
+void ugl_profiler_print(struct ugl_profiler_t* prof);

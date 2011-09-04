@@ -17,6 +17,7 @@
 #include <string.h>
 #include "console.h"
 #include "frametimer.h"
+#include "common.h"
 /* ascii code for the escape key */
 #define ESCAPE 27
 
@@ -135,7 +136,6 @@ void keyPressed(unsigned char key, int x, int y)
 
 int main(int argc, char **argv) 
 { 
-  ugl_profiler_test();
   gl_printk(COLOR_INF,"Necromant's uGL engine.");
   /* Initialize GLUT state - glut will take any command line arguments that pertain to it or 
      X Windows - look at its documentation at http://reality.sgi.com/mjk/spec3/spec3.html */  

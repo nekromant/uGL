@@ -14,10 +14,10 @@
 #include "frametimer.h"
 #include "profile.h"
 
-struct ugl_profile_t* ugl_profile_create(int count, char* tag)
+struct ugl_profiler_t* ugl_profiler_create(int count, char* tag)
 {
-  struct ugl_profile_t* prof = (struct ugl_profile_t*) malloc(
-    sizeof(struct ugl_profile_header_t) + count*sizeof(struct ugl_profile_stamp_t));
+  struct ugl_profiler_t* prof = (struct ugl_profiler_t*) malloc(
+    sizeof(struct ugl_profiler_header_t) + count*sizeof(struct ugl_profiler_stamp_t));
   prof->h.pos=0;
   prof->h.tag=tag;
   prof->h.count=count;
@@ -25,13 +25,19 @@ struct ugl_profile_t* ugl_profile_create(int count, char* tag)
   return prof;
 }
 
-__inline ugl_profile_mark(struct ugl_profile_t* prof, char* label)
+__inline ugl_profiler_mark(struct ugl_profiler_t* prof, char* label)
 {
   gettimeofday(&prof->data[prof->h.pos].stamp, NULL);
   prof->data[prof->h.pos++].tag=label;
 }
 
-void ugl_profile_print(struct ugl_profile_t* prof)
+void ugl_profiler_reset(struct ugl_profiler_t* prof)
+{
+  prof->h.pos=0;
+}
+
+
+void ugl_profiler_print(struct ugl_profiler_t* prof)
 {
   printf("UGL PROFILER REPORT: %s\n", prof->h.tag);
   printf("---\n");
@@ -49,21 +55,19 @@ void ugl_profile_print(struct ugl_profile_t* prof)
 
 void ugl_profiler_test()
 {
-  struct ugl_profile_t* p = ugl_profile_create(10,"test profiling");
-  ugl_profile_mark(p,"uisn");
+  struct ugl_profiler_t* p = ugl_profiler_create(10,"test profiling");
+  ugl_profiler_mark(p,"uisn");
   sleep(1);
-  ugl_profile_mark(p,"uisn");
+  ugl_profiler_mark(p,"uisn");
   sleep(2);
-  ugl_profile_mark(p,"uin");
+  ugl_profiler_mark(p,"uin");
   sleep(3);
-  ugl_profile_mark(p,"uins");
-  ugl_profile_mark(p,"uindfa");
-  ugl_profile_mark(p,"uin");
-  ugl_profile_mark(p,"uindfa");
-  ugl_profile_mark(p,"uin");
-  ugl_profile_mark(p,"uindfa");
-  ugl_profile_print(p);
+  ugl_profiler_mark(p,"uins");
+  ugl_profiler_mark(p,"uindfa");
+  ugl_profiler_mark(p,"uin");
+  ugl_profiler_mark(p,"uindfa");
+  ugl_profiler_mark(p,"uin");
+  ugl_profiler_mark(p,"uindfa");
+  ugl_profiler_print(p);
   exit(0);
-  
-  
 }
