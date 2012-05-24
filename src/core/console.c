@@ -88,7 +88,8 @@ void gl_printk(GLbyte r, GLbyte g, GLbyte b, char* fmt, ...)
   char buffer[LINE_LENGTH];
   vsnprintf(buffer,LINE_LENGTH,fmt,ap);
   snprintf(&lines[line][0], LINE_LENGTH,"[ %.02f ] %s",since,buffer);
-  
+  printf(&lines[line][0]);
+  printf("\n");
   colors[line].r=r;
   colors[line].g=g;
   colors[line].b=b;
@@ -131,8 +132,33 @@ GLvoid glPrint(char *text)                      // custom gl print routine.
 
 
 static float ppos=0;
-void console_redraw(float del)
+static int console_enabled=1;
+
+__inline void console_enable()
 {
+  console_enabled=1;
+}
+
+__inline void console_disable()
+{
+  console_enabled=0;
+}
+
+__inline void console_handle_key(char key)
+{
+  switch (key)
+  {
+	case '~':
+	console_enabled=!console_enabled;
+	break;
+  }
+}
+
+__inline void console_redraw(float del)
+{
+  if (console_enabled)
+  {
+  frametimer_process_fps(); 
   int pos = glutGet(GLUT_WINDOW_HEIGHT);
   glEnable2D();
   int i=line;
@@ -199,4 +225,5 @@ glBegin(GL_LINES);
   if (ppos>=glutGet(GLUT_WINDOW_WIDTH)/2)
     ppos=-5.0;
   glDisable2D();
+  }
 }

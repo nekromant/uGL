@@ -18,6 +18,7 @@
 #include "console.h"
 #include "frametimer.h"
 #include "common.h"
+#include "confreader.h"
 /* ascii code for the escape key */
 #define ESCAPE 27
 
@@ -43,7 +44,7 @@ void InitGL(int Width, int Height)              // We call this right after our 
 }
 
 /* The function called when our window is resized (which shouldn't happen, because we're fullscreen) */
-void ReSizeGLScene(int Width, int Height)
+void resize_scene(int Width, int Height)
 {
   if (Height==0)                                // Prevent A Divide By Zero If The Window Is Too Small
     Height=1;
@@ -60,7 +61,7 @@ void ReSizeGLScene(int Width, int Height)
 
 
 
-static int console_enabled=1;
+
 /* The main drawing function. */
 //#ifdef UGL_DRAW_PROFILING 
 //static float a,b,c,d,e;
@@ -74,7 +75,35 @@ void ugl_update_scene()
   frametimer_update();
 }
 
-void DrawGLScene()
+
+draw_test_shit()
+{
+	 glColor3f(0.0f, 0.0f, 0.0f);
+	 glColor4f(1,1,1,1);
+     glRecti(300,300, 400, 400);
+	 glBegin(GL_LINES);                                                // Drawing Using Triangles
+            glVertex2d( 200, 110);                          // Top
+			glVertex2d( 50, 100);                          // Top
+	 glEnd();
+	 glBegin(GL_LINES);                                                // Drawing Using Triangles
+            glVertex2d( 150, 150);                          // Top
+			glVertex2d( 150, 250);
+
+			glVertex2d( 150, 250);
+			glVertex2d( 250, 250);
+
+			glVertex2d( 250, 250);			
+			glVertex2d( 250, 150);
+			
+			glVertex2d( 250, 150);
+			glVertex2d( 150, 150);
+			
+			// Top
+	 glEnd();
+}
+
+
+void render_scene()
 {
   
   ugl_update_scene();
@@ -83,10 +112,9 @@ void DrawGLScene()
   glLoadIdentity();                             // Reset The View
   glColor4f(1,1,1,1);
   float delta = frametimer_getdelta();
-  if (console_enabled) {
-    frametimer_process_fps(); 
+  //if (console_enabled) {
     console_redraw(delta);
-  }
+  //}
   
   glTranslatef(0.0f,0.0f,-6.0f);
   glEnable2D();
@@ -95,6 +123,8 @@ void DrawGLScene()
                 glVertex2d( 0, 10);                          // Top
 		glVertex2d( 1024, 10);                          // Top
   glEnd();
+  
+  draw_test_shit();
   glDisable2D();
    
   //Draw the console if enabled
@@ -124,60 +154,40 @@ void keyPressed(unsigned char key, int x, int y)
         /* exit the program...normal termination. */
         exit(0);                 
         break;
-	//Bring on the console
-	case '~':
-	console_enabled=!console_enabled;
-	break;
     }
+    console_handle_key(key);
     
 }
 
 
+void idle()
+{
+  
+}
 
 int main(int argc, char **argv) 
 { 
-  gl_printk(COLOR_INF,"Necromant's uGL engine.");
-  /* Initialize GLUT state - glut will take any command line arguments that pertain to it or 
-     X Windows - look at its documentation at http://reality.sgi.com/mjk/spec3/spec3.html */  
+  gl_printk(COLOR_INF,"Necromant's uGL engine :: init()");
   glutInit(&argc, argv);
-  gl_printk(COLOR_INF,"Glut initialised & ready");
-  /* Select type of Display mode:   
-     Double buffer 
-     RGBA color
-     Alpha components supported 
-     Depth buffer */  
+  //FIXME: Sucks
   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);  
   gl_printk(COLOR_INF,"Display mode set up");
-  /* get a 640 x 480 window */
-  int w = 640;
-  int h = 480;
-  glutInitWindowSize(w, h);  
-  gl_printk(COLOR_INF,"Window set to %dx%d", w,h);
-  /* the window starts at the upper left corner of the screen */
-  glutInitWindowPosition(0, 0);  
-
-  /* Open a window */  
-  window = glutCreateWindow("Necromant's uGL: Invyl");  
-
-  /* Register the function to do all our OpenGL drawing. */
-  glutDisplayFunc(&DrawGLScene);  
-
-  /* Go fullscreen.  This is as soon as possible. */
-  glutFullScreen();
-
-  /* Even if there are no events, redraw our gl scene. */
-  glutIdleFunc(&DrawGLScene);
+  if (ugl_config_init(argv[1])) 
+  window = config_init_gl();
+  
+  glutDisplayFunc(&render_scene);  
+  glutIdleFunc(&render_scene);
 
   /* Register the function called when our window is resized. */
-  glutReshapeFunc(&ReSizeGLScene);
+  glutReshapeFunc(&resize_scene);
 
   /* Register the function called when the keyboard is pressed. */
   glutKeyboardFunc(&keyPressed);
 
   /* Initialize our window. */
-  InitGL(w, h);
+
+  //console_init(13,"-adobe-helvetica-medium-r-normal--12-*-*-*-p-*-iso8859-1");
   
-  console_init(13,"-adobe-helvetica-medium-r-normal--12-*-*-*-p-*-iso8859-1");
   //console_redraw();
   /* Start Event Processing Engine */  
   gl_printk(COLOR_OK,"core: Starting control thread");
