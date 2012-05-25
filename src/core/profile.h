@@ -1,8 +1,6 @@
 #ifndef __PROFILE_H
 #define __PROFILE_H
 
-
-
 struct ugl_profiler_stamp_t 
 {
   struct timeval stamp;
